@@ -32,7 +32,7 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // chrome.identity.clearAllCachedAuthTokens(() => console.log("logged off"));
   } else if (request.message == "set_state") {
     // chrome.identity.getAuthToken({ interactive: true }, function (token) {
-    let token = "";
+    // let token = "";
     fetch(
       `${apiUrl}/votes?videoId=${request.videoId}&likeCount=${
         request.likeCount || ""
@@ -49,7 +49,6 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse(response);
       })
       .catch();
-    return true;
   } else if (request.message == "send_links") {
     toSend = toSend.concat(request.videoIds.filter((x) => !sentIds.has(x)));
     if (toSend.length >= 20) {
@@ -67,11 +66,10 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   } else if (request.message == "register") {
     register();
-    return true;
   } else if (request.message == "send_vote") {
     sendVote(request.videoId, request.vote);
-    return true;
   }
+  return Promise.resolve(true);
 });
 
 api.runtime.onInstalled.addListener(() => {
