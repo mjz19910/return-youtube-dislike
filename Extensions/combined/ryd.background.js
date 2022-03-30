@@ -72,8 +72,17 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return Promise.resolve(true);
 });
 
-api.runtime.onInstalled.addListener(() => {
-  api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
+api.runtime.onInstalled.addListener((details) => {
+  if (details.reason == "install") {
+    api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
+  } else if(details.reason == "update") {
+    let version = api.runtime.getManifest().version;
+    if(version != details.previousVersion) {
+      // TODO: The version does not match...
+      api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
+    }
+  }
+  console.log(details);
 })
 
 async function sendVote(videoId, vote) {
