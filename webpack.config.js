@@ -1,6 +1,5 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
-const FileManagerPlugin = require("filemanager-webpack-plugin");
 
 const entries = ['ryd.content-script', 'ryd.background', 'popup'];
 
@@ -51,25 +50,33 @@ module.exports = {
           from: "./Extensions/combined/manifest-firefox.json",
           to: "./firefox/manifest.json",
         },
-      ],
-    }),
-    new FileManagerPlugin({
-      events: {
-        onEnd: {
-          copy: [
-            {
-              source: "./Extensions/combined/dist/**.js",
-              destination:
-                "./Extensions/combined/dist/firefox/",
-            },
-            {
-              source: "./Extensions/combined/dist/**.js",
-              destination:
-                "./Extensions/combined/dist/chrome/",
-            },
-          ],
+        // firefox js dist
+        {
+          from: "./Extensions/combined/dist/popup.js",
+          to: "./firefox/popup.js",
         },
-      },
+        {
+          from: "./Extensions/combined/dist/ryd.background.js",
+          to: "./firefox/ryd.background.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.content-script.js",
+          to: "./firefox/ryd.content-script.js",
+        },
+        // chrome js dist
+        {
+          from: "./Extensions/combined/dist/popup.js",
+          to: "./chrome/popup.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.background.js",
+          to: "./chrome/ryd.background.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.content-script.js",
+          to: "./chrome/ryd.content-script.js",
+        },
+      ],
     }),
   ],
 };
