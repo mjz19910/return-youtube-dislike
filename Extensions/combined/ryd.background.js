@@ -69,7 +69,7 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.message == "send_vote") {
     sendVote(request.videoId, request.vote);
   }
-  return Promise.resolve(true);
+  return true;
 });
 
 api.runtime.onInstalled.addListener((details) => {
@@ -82,7 +82,7 @@ api.runtime.onInstalled.addListener((details) => {
       api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
     }
   }
-  return Promise.resolve(true);
+  return true;
 })
 
 async function sendVote(videoId, vote) {
@@ -270,7 +270,6 @@ function storageChangeHandler(changes, area) {
   if (changes.numberDisplayFormat !== undefined) {
     handleNumberDisplayFormatChangeEvent(changes.numberDisplayFormat.newValue);
   }
-  return Promise.resolve(true);
 }
 
 function handleDisableVoteSubmissionChangeEvent(value) {
