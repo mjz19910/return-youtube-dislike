@@ -1,5 +1,35 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const fs = require('fs');
+
+class CopyAfterEmitPlugin {
+  constructor(options) {
+    this.PLUGIN_NAME = "CopyAfterEmit";
+    this.options=options;
+  }
+  async execute(eventName) {
+    switch(eventName){
+      case 'onEnd':{
+        for(let item of this.options.finish) {
+          this.logger.log(`copying from ${item.from} to ${item.to}`);
+          try{
+            await fs.promises.copyFile(item.from, item.to);
+          } catch {
+            this.logger.log("Failed to copy");
+          }
+        }
+      } break;
+    }
+  }
+  apply(compiler) {
+    this.logger = compiler.getInfrastructureLogger(this.PLUGIN_NAME);
+    const onEnd = async () => {
+      await this.execute('onEnd');
+    }
+    this.logger.log("Apply CopyAfterEmit");
+    compiler.hooks.afterEmit.tapPromise(this.PLUGIN_NAME, onEnd);
+  }
+}
 
 const entries = ['ryd.content-script', 'ryd.background', 'popup'];
 
@@ -50,33 +80,35 @@ module.exports = {
           from: "./Extensions/combined/manifest-firefox.json",
           to: "./firefox/manifest.json",
         },
-        // firefox js dist
-        {
-          from: "./Extensions/combined/dist/popup.js",
-          to: "./firefox/popup.js",
-        },
-        {
-          from: "./Extensions/combined/dist/ryd.background.js",
-          to: "./firefox/ryd.background.js",
-        },
-        {
-          from: "./Extensions/combined/dist/ryd.content-script.js",
-          to: "./firefox/ryd.content-script.js",
-        },
-        // chrome js dist
-        {
-          from: "./Extensions/combined/dist/popup.js",
-          to: "./chrome/popup.js",
-        },
-        {
-          from: "./Extensions/combined/dist/ryd.background.js",
-          to: "./chrome/ryd.background.js",
-        },
-        {
-          from: "./Extensions/combined/dist/ryd.content-script.js",
-          to: "./chrome/ryd.content-script.js",
-        },
       ],
+    }),
+    new CopyAfterEmitPlugin({
+      finish:[
+        {
+          from: "./Extensions/combined/dist/popup.js",
+          to: "./Extensions/combined/dist/firefox/popup.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.background.js",
+          to: "./Extensions/combined/dist/firefox/ryd.background.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.content-script.js",
+          to: "./Extensions/combined/dist/firefox/ryd.content-script.js",
+        },
+        {
+          from: "./Extensions/combined/dist/popup.js",
+          to: "./Extensions/combined/dist/chrome/popup.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.background.js",
+          to: "./Extensions/combined/dist/chrome/ryd.background.js",
+        },
+        {
+          from: "./Extensions/combined/dist/ryd.content-script.js",
+          to: "./Extensions/combined/dist/chrome/ryd.content-script.js",
+        },
+      ]
     }),
   ],
 };
