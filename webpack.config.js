@@ -84,6 +84,7 @@ module.exports = {
     }),
     new CopyAfterEmitPlugin({
       finish:[
+        // firefox
         {
           from: "./Extensions/combined/dist/popup.js",
           to: "./Extensions/combined/dist/firefox/popup.js",
@@ -96,6 +97,7 @@ module.exports = {
           from: "./Extensions/combined/dist/ryd.content-script.js",
           to: "./Extensions/combined/dist/firefox/ryd.content-script.js",
         },
+        // chrome
         {
           from: "./Extensions/combined/dist/popup.js",
           to: "./Extensions/combined/dist/chrome/popup.js",
