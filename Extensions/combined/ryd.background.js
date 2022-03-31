@@ -82,7 +82,7 @@ api.runtime.onInstalled.addListener((details) => {
       api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
     }
   }
-  console.log(details);
+  return Promise.resolve(true);
 })
 
 async function sendVote(videoId, vote) {
@@ -270,6 +270,7 @@ function storageChangeHandler(changes, area) {
   if (changes.numberDisplayFormat !== undefined) {
     handleNumberDisplayFormatChangeEvent(changes.numberDisplayFormat.newValue);
   }
+  return Promise.resolve(true);
 }
 
 function handleDisableVoteSubmissionChangeEvent(value) {
