@@ -17,7 +17,7 @@ function sendVote(vote) {
       message: "send_vote",
       vote: vote,
       videoId: getVideoId(window.location.href),
-    });
+    }).then(()=>{});
   }
 }
 
@@ -44,7 +44,7 @@ function sendVideoIds() {
   getBrowser().runtime.sendMessage({
     message: "send_links",
     videoIds: ids,
-  });
+  }).then(()=>{});
 }
 
 function likeClicked() {
@@ -130,6 +130,7 @@ function storageChangeHandler(changes, area) {
   if (changes.numberDisplayFormat !== undefined) {
     handleNumberDisplayFormatChangeEvent(changes.numberDisplayFormat.newValue);
   }
+  return Promise.resolve(true);
 }
 
 function handleDisableVoteSubmissionChangeEvent(value) {
