@@ -26,10 +26,12 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log(token);
       chrome.identity.getProfileUserInfo(function (userInfo) {
         console.log(JSON.stringify(userInfo));
+        sendResponse(true);
       });
     });
   } else if (request.message === "log_off") {
     // chrome.identity.clearAllCachedAuthTokens(() => console.log("logged off"));
+    sendResponse(true);
   } else if (request.message == "set_state") {
     // chrome.identity.getAuthToken({ interactive: true }, function (token) {
     // let token = "";
@@ -47,6 +49,7 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then((response) => response.json())
       .then((response) => {
         sendResponse(response);
+        sendResponse(true);
       })
       .catch();
   } else if (request.message == "send_links") {
@@ -58,6 +61,8 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(toSend),
+      }).then(()=> {
+        sendResponse(true);
       });
       for (const toSendUrl of toSend) {
         sentIds.add(toSendUrl);
@@ -66,8 +71,10 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   } else if (request.message == "register") {
     register();
+    sendResponse(true);
   } else if (request.message == "send_vote") {
     sendVote(request.videoId, request.vote);
+    sendResponse(true);
   }
   return true;
 });
