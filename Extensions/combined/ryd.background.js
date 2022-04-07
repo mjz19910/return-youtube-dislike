@@ -21,17 +21,16 @@ else if (isFirefox()) api = browser;
 initExtConfig();
 
 api.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('onMessage');
   if (request.message === "get_auth_token") {
     chrome.identity.getAuthToken({ interactive: true }, function (token) {
       console.log(token);
       chrome.identity.getProfileUserInfo(function (userInfo) {
         console.log(JSON.stringify(userInfo));
-        sendResponse(true);
       });
     });
   } else if (request.message === "log_off") {
     // chrome.identity.clearAllCachedAuthTokens(() => console.log("logged off"));
-    sendResponse(true);
   } else if (request.message == "set_state") {
     // chrome.identity.getAuthToken({ interactive: true }, function (token) {
     // let token = "";
@@ -49,7 +48,6 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then((response) => response.json())
       .then((response) => {
         sendResponse(response);
-        sendResponse(true);
       })
       .catch();
   } else if (request.message == "send_links") {
@@ -62,7 +60,6 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
         },
         body: JSON.stringify(toSend),
       }).then(()=> {
-        sendResponse(true);
       });
       for (const toSendUrl of toSend) {
         sentIds.add(toSendUrl);
@@ -71,15 +68,14 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   } else if (request.message == "register") {
     register();
-    sendResponse(true);
   } else if (request.message == "send_vote") {
     sendVote(request.videoId, request.vote);
-    sendResponse(true);
   }
-  return true;
+  sendResponse();
 });
 
 api.runtime.onInstalled.addListener((details) => {
+  console.log('onInstalled');
   if (details.reason == "install") {
     api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
   } else if(details.reason == "update") {
@@ -89,7 +85,6 @@ api.runtime.onInstalled.addListener((details) => {
       api.tabs.create({url: api.runtime.getURL("/changelog/3/changelog_3.0.html")});
     }
   }
-  return true;
 })
 
 async function sendVote(videoId, vote) {

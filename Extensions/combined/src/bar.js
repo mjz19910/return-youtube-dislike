@@ -21,10 +21,15 @@ function createRateBar(likes, dislikes) {
         colorDislikeStyle = "; background-color: " + getColorFromTheme(false);
       }
 
-      (
+
+      let container = (
         document.getElementById("menu-container") ||
         document.querySelector("ytm-slim-video-action-bar-renderer")
-      ).insertAdjacentHTML(
+      );
+
+      if(!container) return;
+
+      container.insertAdjacentHTML(
         "beforeend",
         `
             <div class="ryd-tooltip" style="width: ${widthPx}px">
